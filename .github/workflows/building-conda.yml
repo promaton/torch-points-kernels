@@ -1,66 +1,27 @@
 name: Building Conda
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ "**" ]
+    tags: [ "*" ]
 
 jobs:
-
   conda-build:
     runs-on: ${{ matrix.os }}
-
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04, macos-10.15] #, windows-2019]
-        python-version: ['3.7', '3.8', '3.9'] #, '3.10']
-        torch-version: [1.10.0, 1.11.0, 1.12.0]
-        cuda-version: ['cpu', 'cu102', 'cu113', 'cu115', 'cu116']
-        exclude:
-          - torch-version: 1.10.0
-            cuda-version: 'cu116'
-          - torch-version: 1.11.0
-            cuda-version: 'cu116'
-          - torch-version: 1.12.0
-            cuda-version: 'cu115'
-          - torch-version: 1.10.0
-            cuda-version: 'cu115'
-          - torch-version: 1.10.0
-            python-version: '3.10'
-          - os: windows-2019
-            torch-version: 1.11.0
-            cuda-version: 'cu102'
-          - os: macos-10.15
-            cuda-version: 'cu102'
-          - os: macos-10.15
-            cuda-version: 'cu113'
-          - os: macos-10.15
-            cuda-version: 'cu115'
-          - os: macos-10.15
-            cuda-version: 'cu116'
-          - os: macos-10.15
-            python-version: '3.10' # this is unhappy
-          - os: ubuntu-18.04
-            cuda-version: 'cu115'
-          - os: windows-2019
-            cuda-version: 'cu102'
-          - os: windows-2019  # Complains about CUDA mismatch.
-            python-version: '3.7'
-
+        os: ['ubuntu-20.04']
+        python-version: ['3.8', '3.9', '3.10']
+        torch-version: ['1.11.0', '1.13.1']
+        cuda-version: ['cpu', 'cu113']
     steps:
       - uses: actions/checkout@v2
       - name: Set up Conda for Python ${{ matrix.python-version }}
         uses: conda-incubator/setup-miniconda@v2
         with:
           python-version: ${{ matrix.python-version }}
-          
-      - name: Free up disk space
-        if: ${{ runner.os == 'Linux' }}
-        run: |
-          sudo rm -rf /usr/share/dotnet
-
-      - name: Free up disk space
-        if: ${{ runner.os == 'Linux' }}
-        run: |
-          sudo rm -rf /usr/share/dotnet
 
       - name: Install Conda packages
         run: |
@@ -90,11 +51,11 @@ jobs:
         shell:
           bash -l {0}
 
-      - name: Publish Conda package
-        run: |
-          conda install anaconda-client --yes
-          anaconda upload --force --label main $HOME/conda-bld/*/*.tar.bz2
-        env:
-          ANACONDA_API_TOKEN: ${{ secrets.CONDA_TOKEN }}
-        shell:
-          bash -l {0}
+      #- name: Publish Conda package
+      #  run: |
+      #    conda install anaconda-client --yes
+      #    anaconda upload --force --label main $HOME/conda-bld/*/*.tar.bz2
+      #  env:
+      #    ANACONDA_API_TOKEN: ${{ secrets.CONDA_TOKEN }}
+      #  shell:
+      #    bash -l {0}
