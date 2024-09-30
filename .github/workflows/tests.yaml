@@ -2,7 +2,6 @@ name: Unittests
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize, ready_for_review]
   push:
     branches:
       - "master"
@@ -10,7 +9,7 @@ on:
 jobs:
   unittests:
     strategy:
-      env:
+      matrix:
         os: [ubuntu-latest]
         python-version: [3.10]
         torch-version: [2.0.1, 2.1.1, 2.2.1, 2.3.1, 2.4.1]
