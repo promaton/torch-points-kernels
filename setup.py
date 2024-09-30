@@ -41,7 +41,7 @@ def get_ext_modules():
     if WITH_CUDA:
         nvcc_flags = os.getenv("NVCC_FLAGS", "")
         nvcc_flags = [] if nvcc_flags == "" else nvcc_flags.split(" ")
-        nvcc_flags += ["-arch=sm_35", "--expt-relaxed-constexpr", "-O2"]
+        nvcc_flags += ["--expt-relaxed-constexpr", "-O2"]
         extra_compile_args["nvcc"] = nvcc_flags
 
         ext_modules.append(
